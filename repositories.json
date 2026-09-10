@@ -1,0 +1,47 @@
+[
+  {
+    "name": "ubs-engine",
+    "repository": "openeuler/ubs-engine",
+    "branch": "master"
+  },
+  {
+    "name": "ubs-comm",
+    "repository": "openeuler/ubs-comm",
+    "branch": "master"
+  },
+  {
+    "name": "ubs-virt",
+    "repository": "openeuler/ubs-virt",
+    "branch": "master"
+  },
+  {
+    "name": "ubs-io",
+    "repository": "openeuler/ubs-io",
+    "branch": "master"
+  },
+  {
+    "name": "ubs-mem",
+    "repository": "openeuler/ubs-mem",
+    "branch": "master"
+  },
+  {
+    "name": "OmniStateStore",
+    "repository": "openeuler/OmniStateStore",
+    "branch": "master"
+  },
+  {
+    "name": "ham",
+    "repository": "openeuler/ham",
+    "branch": "master"
+  },
+  {
+    "name": "ubturbo",
+    "repository": "openeuler/ubturbo",
+    "branch": "master"
+  },
+  {
+    "name": "ubs-atomic",
+    "repository": "openeuler/ubs-atomic",
+    "branch": "master"
+  }
+]

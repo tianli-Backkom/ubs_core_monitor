@@ -1,0 +1,75 @@
+name: Collect and deploy dashboard
+
+on:
+  schedule:
+    - cron: '30 23 * * *'
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Restore collection cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/raw
+            data/repos
+            data/repositories.json
+            data/efficiency.sqlite
+            web/data
+          key: pages-data-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            pages-data-${{ runner.os }}-
+
+      - name: Collect all repositories
+        run: python -X utf8 collect.py --all --days 30
+
+      - name: Run Python tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Run Node tests
+        run: node --test tests/*.test.cjs
+
+      - name: Audit collected data
+        run: python -X utf8 validate.py
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload dashboard
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: web
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

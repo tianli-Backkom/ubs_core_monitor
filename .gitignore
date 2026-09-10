@@ -1,0 +1,7 @@
+__pycache__/
+data/
+web/data/
+web/exports/
+*.tmp
+.pytest_cache/
+.superpowers/
