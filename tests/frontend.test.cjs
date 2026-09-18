@@ -19,3 +19,22 @@ test('localhost export posts CSV to the local save endpoint',async()=>{
  assert.equal(request.url,'/api/export');assert.equal(request.options.method,'POST');assert.match(request.options.body,/openeuler\/ubs-engine/);assert.equal(result.mode,'saved');
 });
 test('dashboard routes every CSV download through the environment-aware exporter',()=>{const source=fs.readFileSync(path.join(__dirname,'../web/app.js'),'utf8');assert.match(source,/Metrics\.saveCsv\(rows,name\)/);});
+test('SLA assessment identifies task bottlenecks and trigger-stage anomalies',()=>{
+ const task=(kind,total_ms)=>({kind,url:kind+'/1',result:'SUCCESS',association_valid:true,total_ms});
+ const dtSlow={number:1,url:'t/1',eligible:true,e2e_ms:2_500_000,status:'success',children:[task('dt',1_300_000)]};
+ const triggerSlow={number:2,url:'t/2',eligible:true,e2e_ms:2_500_000,status:'success',children:[task('dt',60_000),task('arm',60_000),task('x86',60_000)]};
+ assert.equal(M.assessPR({number:1,batches:[dtSlow]}).severity,'red');
+ assert.equal(M.assessPR({number:1,batches:[dtSlow]}).bottleneck,'dt');
+ const e2eRedTaskYellow={number:3,url:'t/3',eligible:true,e2e_ms:50_000_000,status:'success',children:[task('dt',17*60_000)]};
+ assert.equal(M.assessPR({number:3,batches:[e2eRedTaskYellow]}).bottleneck,'trigger');
+ assert.equal(M.assessPR({number:2,batches:[triggerSlow]}).bottleneck,'trigger');
+});
+test('SLA assessment ranks red exceptions before failures and excludes quality-only rows',()=>{
+ const red={number:1,created_ms:1,batches:[{number:1,url:'r',eligible:true,e2e_ms:1_900_000,status:'success',children:[]}]};
+ const failed={number:2,created_ms:2,batches:[{number:1,url:'f',eligible:true,e2e_ms:100_000,status:'failure',children:[]}]};
+ const quality={number:3,created_ms:3,issues:['missing event'],batches:[]};
+ const rows=M.prioritizeExceptions([failed,quality,red]);
+ assert.deepEqual(rows.map(x=>x.pr.number),[1,2]);
+ assert.equal(M.filterPRs([red,failed,quality],{alert:'quality'}).length,1);
+ assert.equal(M.filterPRs([red,failed,quality],{alert:'failure'})[0],failed);
+});
