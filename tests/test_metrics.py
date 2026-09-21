@@ -23,11 +23,11 @@ class MetricsTest(unittest.TestCase):
         b=measure_batch(job(),[job(start=1500,duration=5000)],500,True)
         self.assertEqual(b['e2e_ms'],6000)
         self.assertTrue(b['eligible'])
-    def test_missing_request_and_cancellation_excluded(self):
+    def test_missing_request_is_excluded_but_completed_cancellation_is_measurable(self):
         b=measure_batch(job(),[job()],None,True)
         self.assertIsNone(b['e2e_ms'])
         self.assertFalse(b['eligible'])
-        self.assertFalse(measure_batch(job(),[job('ABORTED')],500,True)['eligible'])
+        self.assertTrue(measure_batch(job(),[job('ABORTED')],500,True)['eligible'])
     def test_queue_is_not_zero_when_missing(self):
         j=normalize_job({'url':'j/1/','timestamp':10000,'duration':1000,'result':'SUCCESS','actions':[]})
         self.assertIsNone(j['queue_ms'])

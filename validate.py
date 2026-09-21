@@ -32,7 +32,7 @@ for b in batches:
     if b['status']=='success':assert b['complete'] and b['children'] and all(j.get('result')=='SUCCESS' and not j.get('building') for j in js)
     if b['status']=='failure':assert any(j.get('result') not in ['SUCCESS',None] for j in js)
     if b['eligible']:
-        assert not b['cancelled'] and b['request_ms'] is not None
+        assert b['request_ms'] is not None
         assert b['e2e_ms']==max(j['end_ms'] for j in js)-b['request_ms']>=0
     if b['request_ms'] is None:assert b['e2e_ms'] is None
     for j in js:

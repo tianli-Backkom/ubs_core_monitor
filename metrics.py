@@ -48,7 +48,7 @@ def measure_batch(trigger,children,request_ms,complete):
     scheduled=trigger.get('scheduled_ms')
     ci=end-scheduled if end is not None and scheduled is not None and end>=scheduled else None
     return dict(status=status,cancelled=cancelled,end_ms=end,e2e_ms=e2e,jenkins_ms=ci,
-        eligible=status in ['success','failure'] and not cancelled and e2e is not None)
+        eligible=status in ['success','failure'] and e2e is not None)
 
 def extract_events(pr,logs,comments):
     events=[dict(id='create',kind='create',time_ms=ms(pr['created_at']),sha=None,source='PR.created_at')]
@@ -95,7 +95,7 @@ def task_kind(url):
     return 'other'
 
 def pr_metrics(batches):
-    """One PR sample from its longest eligible E2E batch; never borrow tasks."""
+    """One PR sample from its longest measurable terminal E2E batch; never borrow tasks."""
     valid = [b for b in batches if b.get('eligible') and isinstance(b.get('e2e_ms'), (int, float)) and b['e2e_ms'] >= 0]
     b = max(valid, key=lambda b: (b['e2e_ms'], int(b['number']), b['url']), default=None)
     out = dict(representative_batch_url=b['url'] if b else None,

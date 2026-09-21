@@ -85,7 +85,7 @@ def audit():
                     jobs = [batch['trigger']] + batch['children']
                     if batch['status'] == 'success': assert batch['complete'] and batch['children'] and all(j.get('result') == 'SUCCESS' and not j.get('building') for j in jobs)
                     if batch['eligible']:
-                        assert batch['status'] in ['success', 'failure'] and batch['complete'] and not batch['cancelled']
+                        assert batch['status'] in ['success', 'failure'] and batch['complete']
                         assert batch['request_ms'] is not None
                         assert batch['e2e_ms'] == max(j['end_ms'] for j in jobs) - batch['request_ms'] >= 0
                     if batch['request_ms'] is None: assert batch['e2e_ms'] is None
