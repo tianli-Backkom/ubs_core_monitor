@@ -402,3 +402,7 @@ dialog::backdrop{background:rgba(16,43,50,.55);backdrop-filter:blur(3px);animati
 .pr-table,.repository-table{font-size:14px}.pr-table th,.repository-table th{font-size:13px}.pr-table th small,.repository-table small,.pr-meta,.sample{font-size:12px}.pr-title,.metric-value{font-size:14px}.metric-value span{font-size:12px}.timeline-head,.timeline-row,.batch summary{font-size:13px}.batch-context,.detail-meta,.event-heading,.event-heading code,.timeline-legend,.batch-issues{font-size:13px}
 @media(max-width:900px){.attention-cards{grid-template-columns:repeat(2,1fr)}.attention-head{flex-direction:column}.exception-row{grid-template-columns:1fr auto;gap:10px}.exception-title,.exception-why{grid-column:1/3;white-space:normal}.exception-repo{grid-column:1}.exception-e2e{grid-column:2;grid-row:1;text-align:right}}
 @media(max-width:560px){.attention{padding:var(--sp-5)}.attention-cards{grid-template-columns:1fr}.exception-row{padding:15px var(--sp-4)}}
+
+/* Platform trigger facts and observed failed waits. */
+.pr-table{min-width:1320px}.pr-table th:first-child{width:25%}.pr-table th:nth-child(3){width:18%}.pr-table th:nth-child(4){width:16%}
+.trigger-counts{display:flex;flex-wrap:wrap;gap:5px;font-size:13px;line-height:1.7}.trigger-counts>span{background:var(--surface-sunken);padding:1px 6px;border:1px solid var(--line);border-radius:4px;white-space:nowrap}.trigger-counts .has-retest{font-weight:700;border-color:var(--text-2)}.failed-wait{display:block;font-size:13px;line-height:1.6;margin-top:6px;color:var(--text-2)}
